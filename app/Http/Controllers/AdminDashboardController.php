@@ -74,7 +74,7 @@ class AdminDashboardController extends Controller
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
             'role' => 'student',
-            'approved' => true,
+            'status' => 'pending',
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Student account created successfully.');
