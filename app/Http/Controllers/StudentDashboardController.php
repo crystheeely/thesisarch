@@ -25,8 +25,8 @@ class StudentDashboardController extends Controller
         if ($user->role !== 'student') {
             abort(403, 'Unauthorized access.');
         }
-        
-        if (!$user->status == 'approved') {
+        // dd($user->status);
+        if ($user->status == 'pending') {
             return redirect()->route('student.awaiting-approval');
         }
 

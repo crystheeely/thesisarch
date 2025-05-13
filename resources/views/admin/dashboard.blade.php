@@ -85,7 +85,7 @@
                     <td class="px-4 py-2">{{ ucfirst($student->role) }}</td>
                     <td class="px-4 py-2">
                         <span class="{{ $student->approved ? 'text-green-700' : 'text-yellow-700' }}">
-                            {{ $student->approved ? 'Approved' : 'Pending' }}
+                            {{ ucfirst($student->status) }}
                         </span>
                     </td>
                     <td class="px-4 py-2">
