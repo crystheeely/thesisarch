@@ -125,7 +125,7 @@
                         <strong>Year:</strong> {{ $thesis->academic_year }}
                     </p>
 
-                    @if(auth()->user()->isAdmin())
+                    @if(auth()->user()->isFaculty())
                         @php
                             $statusColors = [
                                 'approved' => 'green',
@@ -154,7 +154,7 @@
 
                     <div class="mt-2 space-x-2">
                         <a href="{{ route('theses.download', $thesis->id) }}" class="text-sm text-blue-600 hover:underline">Download</a>
-                        @if(auth()->id() === $thesis->user_id || auth()->user()->isAdmin())
+                        @if(auth()->id() === $thesis->user_id || auth()->user()->isFaculty())
                             <a href="{{ route('theses.edit', $thesis->id) }}" class="text-sm text-yellow-600 hover:underline">Edit</a>
                         @endif
                     </div>
