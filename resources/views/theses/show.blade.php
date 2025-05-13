@@ -54,7 +54,7 @@
                         @csrf @method('PUT')
 
                         <label class="block font-medium text-sm text-gray-700 md:mr-2">Replace File:</label>
-                        <input type="file" name="file" class="text-sm text-gray-700">
+                        <input type="file" name="file" class="text-sm text-gray-700" accept=".pdf,.doc,.docx">
                         <button class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mt-2 md:mt-0">
                             Upload New File
                         </button>
