@@ -37,31 +37,31 @@
         <!-- Title -->
         <div class="mb-4">
             <label class="block text-gray-700">Title:</label>
-            <input type="text" name="title" class="w-full border rounded-lg p-2" value="{{ old('title')?? $thesis->title }}" required>
+            <input type="text" name="title" class="w-full border rounded-lg p-2" value="{{ old('title')?? $thesis->title }}" required {{$thesis->status === 'approved'?'disabled':''}}>
         </div>
 
         <!-- Abstract -->
         <div class="mb-4">
             <label class="block text-gray-700">Abstract:</label>
-            <textarea name="abstract" class="w-full border rounded-lg p-2 h-40 resize-none" required>{{ old('abstract')?? $thesis->abstract }}</textarea>
+            <textarea name="abstract" class="w-full border rounded-lg p-2 h-40 resize-none" required {{$thesis->status === 'approved'?'disabled':''}}>{{ old('abstract')?? $thesis->abstract }}</textarea>
         </div>
 
         <!-- Keywords -->
         <div class="mb-4">
             <label class="block font-medium text-gray-700">Keywords (comma-separated)</label>
-            <input type="text" name="keywords" class="w-full border rounded-lg p-2" value="{{ old('keywords')?? $thesis->keywords }}" placeholder="e.g., AI, machine learning, deep learning">
+            <input type="text" name="keywords" class="w-full border rounded-lg p-2" value="{{ old('keywords')?? $thesis->keywords }}" placeholder="e.g., AI, machine learning, deep learning"  {{$thesis->status === 'approved'?'disabled':''}}>
         </div>
 
         <!-- Academic Year -->
         <div class="mb-4">
             <label class="block text-gray-700">Academic Year:</label>
-            <input type="text" name="academic_year" class="w-full border rounded-lg p-2" placeholder="e.g., 2024-2025" value="{{ old('academic_year')?? $thesis->academic_year }}" required>
+            <input type="text" name="academic_year" class="w-full border rounded-lg p-2" placeholder="e.g., 2024-2025" value="{{ old('academic_year')?? $thesis->academic_year }}" required {{$thesis->status === 'approved'?'disabled':''}}>
         </div>
 
         <!-- Month -->
         <div class="mb-4">
             <label class="block text-gray-700">Month:</label>
-            <select name="month" class="w-full border rounded-lg p-2" required>
+            <select name="month" class="w-full border rounded-lg p-2" required {{$thesis->status === 'approved'?'disabled':''}}>
                 <option value="">Select Month</option>
                 @foreach(['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] as $month)
                     <option value="{{ $month }}" {{ old('month') == $month ? 'selected' : ($thesis->month  == $month?'selected':'') }}>{{ $month }}</option>
@@ -72,7 +72,7 @@
         <!-- Semester -->
         <div class="mb-4">
             <label class="block text-gray-700">Semester:</label>
-            <select name="semester" class="w-full border rounded-lg p-2" required>
+            <select name="semester" class="w-full border rounded-lg p-2" required {{$thesis->status === 'approved'?'disabled':''}}>
                 <option value="">Select Semester</option>
                 <option value="First Semester" {{ old('semester') == 'First Semester' ? 'selected' : ($thesis->semester  == 'First Semester'?'selected':'') }}>First Semester</option>
                 <option value="Second Semester" {{ old('semester') == 'Second Semester' ? 'selected' : ($thesis->semester  == 'Second Semester'?'selected':'') }}>Second Semester</option>
@@ -82,7 +82,7 @@
         <!-- Author -->
         <div class="mb-4">
             <label class="block text-gray-700">Author:</label>
-            <input type="text" name="author_name" class="w-full border rounded-lg p-2" placeholder="Enter author's full name" value="{{ $thesis->author_name??auth()->user()->full_name }}" required>
+            <input type="text" name="author_name" class="w-full border rounded-lg p-2" placeholder="Enter author's full name" value="{{ $thesis->author_name??auth()->user()->full_name }}" required {{$thesis->status === 'approved'?'disabled':''}}>
         </div>
 
         <!-- Co-Authors -->
@@ -92,29 +92,37 @@
                 @if(old('co_authors'))
                     @foreach(old('co_authors') as $coauthor)
                         <div class="flex coauthor-item mb-2">
-                            <input type="text" name="co_authors[]" class="w-full border rounded-lg p-2" value="{{ $coauthor }}">
-                            <button type="button" class="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 remove-coauthor">❌</button>
+                            <input type="text" name="co_authors[]" class="w-full border rounded-lg p-2" value="{{ $coauthor }}" {{$thesis->status === 'approved'?'disabled':''}}>
+                            @if ($thesis->status !== 'approved')
+                                <button type="button" class="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 remove-coauthor">❌</button>
+                            @endif
+                            
                         </div>
                     @endforeach
                 @else
                 {{--  --}}
                  @foreach(json_decode($thesis->coauthors, true) as $coauthor)
                         <div class="flex coauthor-item mb-2">
-                            <input type="text" name="co_authors[]" class="w-full border rounded-lg p-2" value="{{ $coauthor }}">
-                            <button type="button" class="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 remove-coauthor">❌</button>
+                            <input type="text" name="co_authors[]" class="w-full border rounded-lg p-2" value="{{ $coauthor }}"{{$thesis->status === 'approved'?'disabled':''}}>
+                            @if ($thesis->status !== 'approved')
+                                <button type="button" class="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 remove-coauthor">❌</button>
+                            @endif
                         </div>
                     @endforeach
                 @endif
             </div>
-            <button type="button" id="add-coauthor" class="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 mt-2">
-                + Add Co-Author
-            </button>
+            @if ($thesis->status !== 'approved')
+                <button type="button" id="add-coauthor" class="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 mt-2">
+                    + Add Co-Author
+                </button>
+            @endif
+            
         </div>
 
         <!-- Adviser -->
         <div class="mb-4">
             <label class="block text-gray-700">Adviser:</label>
-            <select name="faculty_id" class="w-full border rounded-lg p-2" required>
+            <select name="faculty_id" class="w-full border rounded-lg p-2" required {{$thesis->status === 'approved'?'disabled':''}}>
                 <option value="">Select Adviser</option>
                 @foreach ($facultyUsers as $faculty)
                     <option value="{{ $faculty->id }}" {{ old('faculty_id') == $faculty->id ? 'selected' : ($thesis->faculty_id  == $faculty->id?'selected':'') }}>
@@ -126,9 +134,12 @@
 
         
         <!-- Submit -->
-        <button type="submit" class="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mr-4">
-            Update
-        </button>
+        @if ($thesis->status !== 'approved')
+            <button type="submit" class="mt-6 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 mr-4">
+                Update
+            </button>
+        @endif
+        
     </form>
     
 
@@ -178,7 +189,7 @@
                 @endif
 
                 @auth
-                    @if (auth()->id() === $thesis->user_id && $thesis->status !== 'approved')
+                    @if (auth()->id() === $thesis->user_id)
                         <form action="{{ route('theses.replaceRequirementFile', $requirement->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col md:flex-row items-center gap-3">
                             @csrf @method('PUT')
 
@@ -188,8 +199,7 @@
                                 Upload New File
                             </button>
                         </form>
-                    @elseif ($thesis->status === 'approved')
-                        <p class="text-sm text-gray-500 italic mt-2">This thesis has been approved and can no longer be edited.</p>
+                    
                     @endif
                 @endauth
             </div>            
@@ -225,14 +235,6 @@
             </form>
         </section>
     </section>
-    @if ($thesis->status != 'pending')
-       <form action="{{ route('theses.submitTheses', $thesis->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf @method('PATCH')
-            <button type="submit" class="mt-6 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
-                Submit
-            </button>
-        </form> 
-    @endif
     
 </div>
 @endsection
