@@ -99,15 +99,55 @@
                             <a href="{{ route('theses.show', $thesis->id) }}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700">View</a>
 
                             @if($thesis->status == 'pending')
-                                <form action="{{ route('theses.approve', $thesis->id) }}" method="POST" class="inline">
+                                {{-- <form action="{{ route('theses.approve', $thesis->id) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700">Approve</button>
                                 </form>
                                 <form action="{{ route('theses.revise', $thesis->id) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700">Revise</button>
-                                </form>
+                                </form> --}}
+
+                                 @php
+                                    $actions = [
+                                        [
+                                            'status' => 'approved',
+                                            'comment' => 'Approved by faculty.',
+                                            'label' => 'Approve',
+                                            'bg' => 'bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700',
+                                        ],
+                                        [
+                                            'status' => 'revised',
+                                            'comment' => 'Please revise and resubmit.',
+                                            'label' => 'Revise',
+                                            'bg' => 'bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-700"',
+                                        ],
+                                    ];
+                                @endphp
+
+                                
+                                    @foreach ($actions as $action)
+                                        <form action="{{ route('theses.updateStatus', $thesis->id) }}" method="POST"  class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="status" value="{{ $action['status'] }}">
+                                            <input type="hidden" name="comment" value="{{ $action['comment'] }}">
+                                            <button class="{{ $action['bg'] }}">
+                                                {{ $action['label'] }}
+                                            </button>
+                                        </form>
+                                    @endforeach
                             @endif
+
+
+
+               
+             
+
+
+
+
+
                         </td>
                     </tr>
                 @empty

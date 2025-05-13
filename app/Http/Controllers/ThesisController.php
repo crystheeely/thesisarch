@@ -122,6 +122,7 @@ class ThesisController extends Controller
             'user_id' => auth()->id(),
             'author_name' => $request->author_name, // ✅ fix
             'title' => $request->title,
+            'faculty_id' => $request->faculty_id,
             'abstract' => $request->abstract,
             'keywords' => $request->keywords,
             'academic_year' => $request->academic_year,
@@ -195,12 +196,13 @@ class ThesisController extends Controller
     public function edit($id)
     {
         $thesis = Thesis::findOrFail($id);
+        $facultyUsers = User::where('role', 'faculty')->get();
+        // if (auth()->id() !== $thesis->user_id && !auth()->user()->isAdmin()) {
+        //     return redirect()->route('theses.index')->with('error', 'Unauthorized access.');
+        // }
+        
 
-        if (auth()->id() !== $thesis->user_id && !auth()->user()->isAdmin()) {
-            return redirect()->route('theses.index')->with('error', 'Unauthorized access.');
-        }
-
-        return view('theses.edit', compact('thesis'));
+        return view('theses.editV2', compact('thesis','facultyUsers'));
     }
 
     public function update(Request $request, $id)
@@ -240,15 +242,20 @@ class ThesisController extends Controller
 
         $this->generateQrCode($thesis);
 
+        return redirect()->route('theses.edit',$id)->with('success', 'Thesis updated successfully.');
+    }
+
+    public function uploadNewRequirements(Request $request, $id){
+        // dd($request->input());
         if ($request->hasFile('requirement_files')) {
             foreach ($request->file('requirement_files') as $index => $file) {
                 if ($file) {
-                    $customFileName = 'requirements_' . time() .'_'. $thesis->title .'.' . $request->file('file')->getClientOriginalExtension();
+                    $customFileName = 'requirements_' . time() .'_'.($request->requirement_titles[$index] ?? 'Untitled') .'.' . $file->getClientOriginalExtension();
 
                     $path = $file->storeAs('thesis/'.auth()->id(), $customFileName, 'public');
         
                     ThesisRequirement::create([
-                        'thesis_id' => $thesis->id,
+                        'thesis_id' => $id,
                         'title' => $request->requirement_titles[$index] ?? 'Untitled',
                         'file_path' => $path,
                         'original_filename' => $file->getClientOriginalName(),
@@ -257,7 +264,7 @@ class ThesisController extends Controller
             }
         }
 
-        return redirect()->route('theses.index')->with('success', 'Thesis updated successfully.');
+        return redirect()->route('theses.edit',$id)->with('success', 'Thesis updated successfully.');
     }
 
     public function replaceThesisFile(Request $request, $id)
@@ -288,7 +295,7 @@ class ThesisController extends Controller
         $thesis = Thesis::findOrFail($id);
         $thesis->file_path = $path;
         $thesis->original_filename = $request->file('file')->getClientOriginalName();
-        $thesis->status = 'revised';
+        // $thesis->status = 'revised';
         $thesis->save();
 
         return redirect()->back()->with('success', 'Thesis marked as revised.');
@@ -309,6 +316,15 @@ class ThesisController extends Controller
          $thesis->user->notify(new ThesisCommented($thesis, $request->input('comment')));
 
         return redirect()->back()->with('success', $request->input('status') == 'approved'?'Thesis has been successfully approved.':'Thesis has been marked for revision. Please wait for the student to resubmit.');
+    }
+
+    public function submitTheses($id)
+    {
+        $thesis = Thesis::findOrFail($id);
+        $thesis->status ='pending';
+        $thesis->save();
+
+        return redirect()->back()->with('success', 'Thesis has been successfully submitted.');
     }
 
     
@@ -338,13 +354,13 @@ class ThesisController extends Controller
     {
         $thesis = Thesis::findOrFail($id);
 
-        if (auth()->id() !== $thesis->user_id && !auth()->user()->isAdmin()) {
-            return redirect()->route('theses.index')->with('error', 'Unauthorized access.');
+        if (auth()->id() !== $thesis->user_id && !auth()->user()->isFaculty()) {
+            return redirect()->route('student.dashboard')->with('error', 'Unauthorized access.');
         }
 
         $thesis->delete();
 
-        return redirect()->route('theses.index')->with('success', 'Thesis deleted successfully.');
+        return redirect()->route('student.dashboard')->with('success', 'Thesis deleted successfully.');
     }
 
     public function download($id)

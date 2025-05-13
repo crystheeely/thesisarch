@@ -35,13 +35,16 @@
 
     @endauth
     <a href="{{ route('theses.index') }}" class="text-white hover:text-blue-200">Theses</a>
-    <a href="{{ route('reports.index') }}" class="text-white hover:text-blue-200">Reports</a>
     <a href="{{ route('about-us') }}" class="text-white hover:text-blue-200">About Us</a>
 </div>
 
             <!-- Right: Profile Dropdown -->
             <div class="flex items-center space-x-4">
-                <input type="text" placeholder="Search..." class="px-3 py-1 text-sm rounded border border-white bg-blue-100 text-blue-800 placeholder-blue-300">
+                <form method="GET" action="{{ route('theses.index') }}">
+                    {{-- @csrf  --}}
+                    <input type="text" placeholder="Search..." name="search" class="px-3 py-1 text-sm rounded border border-white bg-blue-100 text-blue-800 placeholder-blue-300">
+                </form>
+               
 
                 @auth
                     <div class="relative">

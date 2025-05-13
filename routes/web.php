@@ -113,10 +113,13 @@ Route::middleware('auth')->prefix('theses')->name('theses.')->group(function () 
     Route::get('/{id}', [ThesisController::class, 'show'])->name('show');
     Route::get('/{id}/edit', [ThesisController::class, 'edit'])->name('edit');
     Route::put('/{id}', [ThesisController::class, 'update'])->name('update');
+    Route::put('/{id}/uploadNewRequirements', [ThesisController::class, 'uploadNewRequirements'])->name('uploadNewRequirements');
     Route::put('replaceThesisFile/{id}', [ThesisController::class, 'replaceThesisFile'])->name('replaceThesisFile');
     Route::put('replaceRequirementFile/{id}', [ThesisController::class, 'replaceRequirementFile'])->name('replaceRequirementFile');
     Route::delete('/{id}', [ThesisController::class, 'destroy'])->name('destroy');
     Route::get('/download/{id}', [ThesisController::class, 'download'])->name('download');
+
+    Route::patch('/{id}/submitTheses', [ThesisController::class, 'submitTheses'])->name('submitTheses');
 
     Route::patch('/{id}/approve', [ThesisController::class, 'approve'])->name('approve');
     Route::patch('/{id}/revise', [ThesisController::class, 'revise'])->name('revise');

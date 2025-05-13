@@ -6,7 +6,7 @@
     $coauthors = json_decode($thesis->coauthors, true) ?? [];
     $mainAuthor = $thesis->author_name ;
     $allAuthors = $mainAuthor . (!empty($coauthors) ? ', ' . implode(', ', $coauthors) : '');
-    $approvedYear = $thesis->approved_at ? $thesis->approved_at->format('Y') : 'N/A';
+    $approvedYear = $thesis->updated_at ? $thesis->updated_at->format('Y') : 'N/A';
 @endphp
 
 <div class="container space-y-8">
@@ -273,12 +273,12 @@
         // BibTeX Generation
         document.getElementById('generateBibtex').addEventListener('click', function () {
             const bibtex = `@article{thesis{{ $thesis->id }},
-  author = { {{ $allAuthors }} },
-  title = { {{ $thesis->title }} },
-  year = { {{ $approvedYear }} },
-  journal = {Thesis Repository},
-  keywords = { {{ $thesis->keywords ?? '' }} }
-}`;
+                author = { {{ $allAuthors }} },
+                title = { {{ $thesis->title }} },
+                year = { {{ $approvedYear }} },
+                journal = {Thesis Repository},
+                keywords = { {{ $thesis->keywords ?? '' }} }
+            }`;
             const output = document.getElementById('bibtexOutput');
             output.value = bibtex;
             output.classList.remove('hidden');

@@ -16,6 +16,20 @@
 
             <form method="GET" action="{{ route('theses.index') }}" class="space-y-4 text-sm">
                 {{-- Author --}}
+                
+                <div>
+                    <label for="author" class="block font-medium">Search</label>
+                    {{-- <select name="author" id="author" class="mt-1 w-full border-gray-300 rounded">
+                        <option value="">All</option>
+                        @foreach ($authors as $id => $value)
+                            <option value="{{ $value->id }}" {{ request('author') == $value->id ? 'selected' : '' }}>
+                                {{ $value->full_name }}
+                            </option>
+                        @endforeach
+                    </select> --}}
+                    <input type="text" placeholder="Search..." name="search" class="mt-1 w-full border-gray-300 rounded">
+                </div>
+
                 <div>
                     <label for="author" class="block font-medium">Author</label>
                     <select name="author" id="author" class="mt-1 w-full border-gray-300 rounded">
