@@ -1,37 +1,28 @@
-# Use official PHP 8.1 with Apache
-FROM php:8.1-apache
+# Use PHP 8.2 with Apache
+FROM php:8.2-apache
 
-# Install system dependencies and PHP extensions
+# Install required PHP extensions and system packages
 RUN apt-get update && apt-get install -y \
-    libonig-dev \
-    libzip-dev \
-    unzip \
-    git \
+    unzip git curl libzip-dev libpng-dev libonig-dev \
     && docker-php-ext-install pdo_mysql mbstring zip
 
-# Enable Apache mod_rewrite for Laravel routing
+# Enable Apache rewrite module
 RUN a2enmod rewrite
-
-# Copy the application code to Apache's web root
-COPY . /var/www/html
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install Composer (copy from official composer image)
+# Copy Composer from the official Composer image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Laravel dependencies
+# Copy app files
+COPY . .
+
+# Install Composer dependencies (skip dev)
 RUN composer install --no-dev --optimize-autoloader
 
-# Generate Laravel optimized files (optional)
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
-
-# Set permissions for storage and cache folders
+# Fix Laravel file permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Expose port 80
 EXPOSE 80
-
-# Start Apache in the foreground
 CMD ["apache2-foreground"]
