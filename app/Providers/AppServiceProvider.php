@@ -11,9 +11,9 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(): void
+    public function boot(UrlGenerator $url): void
     {
-        // Remove $this->registerPolicies();
+        $url->forceScheme('https');
     }
 
     /**
